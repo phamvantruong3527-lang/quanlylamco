@@ -1,11 +1,17 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Bát Đĩa Đi Làm Cỗ</title>
+    <title>Quản Lý Bát Đĩa Làm Cỗ</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/fluency/180/restaurant.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://img.icons8.com/fluency/32/restaurant.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://img.icons8.com/fluency/16/restaurant.png">
+    
+    <meta name="apple-mobile-web-app-title" content="Quản Lý Cỗ">
+    <meta name="application-name" content="Quản Lý Cỗ">
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -148,7 +154,7 @@
 <body>
 
 <div class="container">
-    <h1>🍽️ HỆ THỐNG QUẢN LÝ BÁT ĐĨA LÀM CỖ QUANG HUY</h1>
+    <h1>🍽️ HỆ THỐNG QUẢN LÝ BÁT ĐĨA LÀM CỖ</h1>
 
     <div id="step-create-party">
         <h2>Bước 1: Khởi Tạo Đám Cỗ</h2>
@@ -196,7 +202,7 @@
                 <tr><td class="text-left">Đĩa nhỏ</td><td><input type="number" class="per-mam" data-item="Đĩa nhỏ" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa nhỏ">0</td></tr>
                 <tr><td class="text-left">Đĩa vừa</td><td><input type="number" class="per-mam" data-item="Đĩa vừa" value="2" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa vừa">0</td></tr>
                 <tr><td class="text-left">Đĩa bầu dục</td><td><input type="number" class="per-mam" data-item="Đĩa bầu dục" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa bầu dục">0</td></tr>
-                <tr><td class="text-left">Đĩa vuông</td><td><input type="number" class="per-mam" data-item="Đĩa vuông" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa vuông">0</td></tr>
+                <tr><td class="text-left">Đĩa vuông</td><td><input type="number" class="per-mam" data-item="Đĩa vuông" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateRequired()"></td><td class="note-calc" id="total-Đĩa vuông">0</td></tr>
                 <tr><td class="text-left">Đĩa sao</td><td><input type="number" class="per-mam" data-item="Đĩa sao" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa sao">0</td></tr>
                 <tr><td class="text-left">Khay nước chấm</td><td><input type="number" class="per-mam" data-item="Khay nước chấm" value="2" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Khay nước chấm">0</td></tr>
                 <tr><td class="text-left">Chén</td><td><input type="number" class="per-mam" data-item="Chén" value="6" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Chén">0</td></tr>
@@ -284,7 +290,6 @@
         }
     }
 
-    // Hàm tự động tính toán tổng số đồ cần mang đi ở bước 2 khi thay đổi số mâm hoặc định mức
     function calculateTotalRequired() {
         const mams = parseInt(document.getElementById('party-mams').value) || 0;
         const perMamInputs = document.querySelectorAll('.per-mam');
@@ -315,7 +320,6 @@
         document.getElementById('step-create-party').classList.add('hidden');
         document.getElementById('step-before').classList.remove('hidden');
         
-        // Đặt mặc định số mâm là 0 và tính toán lại bảng số lượng
         document.getElementById('party-mams').value = "0";
         calculateTotalRequired();
         window.scrollTo(0, 0);
@@ -336,8 +340,6 @@
             const itemName = input.getAttribute('data-item');
             const perMamQty = parseInt(input.value) || 0;
             const totalBefore = mams * perMamQty;
-            
-            // Lưu tổng số mang đi ban đầu, mặc định số thu về bằng số mang đi để người dùng tiện chỉnh sửa số hụt
             currentParty.items[itemName] = { before: totalBefore, after: totalBefore };
         });
 
@@ -348,7 +350,6 @@
         bodyAfter.innerHTML = '';
 
         for (const [key, value] of Object.entries(currentParty.items)) {
-            // Chỉ hiển thị loại đồ dùng có tổng mang đi > 0 để nhập thu về cho gọn
             if (value.before > 0) {
                 const row = `
                     <tr>
@@ -505,4 +506,3 @@
 
 </body>
 </html>
-
