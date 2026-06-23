@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Bát Đĩa Đi Làm Cỗ</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #f4f6f7;
+            --history-color: #8e44ad;
+            --info-color: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        h1 { border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input[type="number"] {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.3s;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        button:hover { background-color: #34495e; }
+        
+        .btn-success { background-color: var(--success-color); }
+        .btn-success:hover { background-color: #219653; }
+        
+        .btn-history { background-color: var(--history-color); }
+        .btn-history:hover { background-color: #732d91; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th { background-color: #f2f2f2; color: var(--primary-color); }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+
+        .mam-badge {
+            background-color: var(--info-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        .hidden { display: none; }
+        
+        .loss { color: var(--accent-color); font-weight: bold; }
+        .enough { color: var(--success-color); font-weight: bold; }
+        
+        .text-left { text-align: left; font-weight: 500; }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            background: #fff;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .history-item:hover { background: #f9f9f9; }
+        .btn-sm { width: auto; padding: 5px 10px; font-size: 13px; margin: 0 2px;}
+        .btn-danger { background-color: var(--accent-color); }
+        .btn-danger:hover { background-color: #c0392b; }
+        
+        .note-calc { color: #2980b9; font-size: 14px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🍽️ HỆ THỐNG QUẢN LÝ BÁT ĐĨA LÀM CỖ QUANG HUY</h1>
+
+    <div id="step-create-party">
+        <h2>Bước 1: Khởi Tạo Đám Cỗ</h2>
+        <div class="form-group">
+            <label for="party-name">Tên đám cỗ / Nhà đám:</label>
+            <input type="text" id="party-name" placeholder="Ví dụ: Đám cưới Sự Kiện Đức Tú">
+        </div>
+        <div class="form-group">
+            <label for="party-date">Ngày làm cỗ:</label>
+            <input type="date" id="party-date">
+        </div>
+        <button type="button" onclick="initParty()">Tiếp Tục Thiết Lập Số Mâm</button>
+
+        <div class="card" style="margin-top: 30px;">
+            <h3>🗄️ DANH SÁCH ĐÁM CỖ ĐÃ LƯU TỪ TRƯỚC</h3>
+            <div id="history-list">
+                <p style="text-align: center; color: #888; font-style: italic;">Chưa có đám cỗ nào được lưu.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-before" class="hidden">
+        <h2 id="display-party-title" style="color: var(--history-color);"></h2>
+        <h3>Bước 2: Tính Số Đồ Mang Đi Theo Số Mâm</h3>
+        
+        <div class="form-group" style="background-color: #e8f4f8; padding: 15px; border-radius: 6px; border-left: 5px solid var(--info-color);">
+            <label for="party-mams" style="font-size: 18px; color: var(--info-color);">Tổng số mâm của đám cỗ:</label>
+            <input type="number" id="party-mams" value="0" min="1" style="font-size: 20px; color: var(--accent-color);" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()">
+        </div>
+
+        <p style="color: #666; font-style: italic; text-align: center; margin-top: 15px;">Điền số lượng đồ dùng của <b>1 MÂM</b> bên dưới. Hệ thống sẽ tự nhân ra tổng đồ mang đi.</p>
+        
+        <table id="table-before">
+            <thead>
+                <tr>
+                    <th>Danh sách đồ dùng</th>
+                    <th>Số lượng / 1 mâm</th>
+                    <th>Tổng đồ cần mang đi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="text-left">Bát ăn cơm</td><td><input type="number" class="per-mam" data-item="Bát ăn cơm" value="6" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Bát ăn cơm">0</td></tr>
+                <tr><td class="text-left">Bát to</td><td><input type="number" class="per-mam" data-item="Bát to" value="2" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Bát to">0</td></tr>
+                <tr><td class="text-left">Đĩa to bày tôm</td><td><input type="number" class="per-mam" data-item="Đĩa to bày tôm" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa to bày tôm">0</td></tr>
+                <tr><td class="text-left">Đĩa nhỏ</td><td><input type="number" class="per-mam" data-item="Đĩa nhỏ" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa nhỏ">0</td></tr>
+                <tr><td class="text-left">Đĩa vừa</td><td><input type="number" class="per-mam" data-item="Đĩa vừa" value="2" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa vừa">0</td></tr>
+                <tr><td class="text-left">Đĩa bầu dục</td><td><input type="number" class="per-mam" data-item="Đĩa bầu dục" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa bầu dục">0</td></tr>
+                <tr><td class="text-left">Đĩa vuông</td><td><input type="number" class="per-mam" data-item="Đĩa vuông" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa vuông">0</td></tr>
+                <tr><td class="text-left">Đĩa sao</td><td><input type="number" class="per-mam" data-item="Đĩa sao" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đĩa sao">0</td></tr>
+                <tr><td class="text-left">Khay nước chấm</td><td><input type="number" class="per-mam" data-item="Khay nước chấm" value="2" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Khay nước chấm">0</td></tr>
+                <tr><td class="text-left">Chén</td><td><input type="number" class="per-mam" data-item="Chén" value="6" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Chén">0</td></tr>
+                <tr><td class="text-left">Khăn phủ bàn</td><td><input type="number" class="per-mam" data-item="Khăn phủ bàn" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Khăn phủ bàn">0</td></tr>
+                <tr><td class="text-left">Cốc</td><td><input type="number" class="per-mam" data-item="Cốc" value="6" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Cốc">0</td></tr>
+                <tr><td class="text-left">Mui múc canh</td><td><input type="number" class="per-mam" data-item="Mui múc canh" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Mui múc canh">0</td></tr>
+                <tr><td class="text-left">Khăn cốc</td><td><input type="number" class="per-mam" data-item="Khăn cốc" value="1" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Khăn cốc">0</td></tr>
+                <tr><td class="text-left">Đũa (đôi)</td><td><input type="number" class="per-mam" data-item="Đũa (đôi)" value="6" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="calculateTotalRequired()"></td><td class="note-calc" id="total-Đũa (đôi)">0</td></tr>
+            </tbody>
+        </table>
+        <br>
+        <button type="button" class="btn-success" onclick="lockBeforeSave()">Xác Nhận Số Lượng & Đi Làm Cỗ</button>
+        <button type="button" style="background-color: #7f8c8d;" onclick="backToMain()">Quay Lại Trang Chủ</button>
+    </div>
+
+    <div id="step-after" class="hidden">
+        <h2 id="display-party-title-after" style="color: var(--history-color);"></h2>
+        <div style="text-align: center; margin-bottom: 10px;">
+            <div id="mam-count-after" class="mam-badge"></div>
+        </div>
+        <h3>Bước 3: Kiểm Kê Tổng Số Đồ Thu Về Sau Khi Làm Cỗ</h3>
+        <p style="color: #666; font-style: italic; text-align: center;">Điền <b>TỔNG SỐ LƯỢNG THỰC TẾ</b> gom về được sau dọn rửa.</p>
+
+        <table id="table-after">
+            <thead>
+                <tr>
+                    <th>Loại đồ dùng</th>
+                    <th>Tổng mang đi ban đầu</th>
+                    <th>Tổng thực tế thu về</th>
+                </tr>
+            </thead>
+            <tbody id="body-after">
+                </tbody>
+        </table>
+        <br>
+        <button type="button" class="btn-success" onclick="calculateResultAndSave()">Tính Toán Hao Hụt & Lưu Đám Cỗ</button>
+    </div>
+
+    <div id="step-result" class="card hidden">
+        <h2 id="display-party-title-result" style="color: var(--success-color);"></h2>
+        <div style="text-align: center; margin-bottom: 10px;">
+            <div id="mam-count-result" class="mam-badge" style="background-color: var(--success-color);"></div>
+        </div>
+        <h3>📊 BÁO CÁO CHI TIẾT ĐỒ ĐẠC THIẾU HỤT</h3>
+        <table id="table-result">
+            <thead>
+                <tr>
+                    <th>Loại đồ dùng</th>
+                    <th>Tổng mang đi</th>
+                    <th>Tổng thu về</th>
+                    <th>Thiếu hụt</th>
+                    <th>Trạng thái đối chiếu</th>
+                </tr>
+            </thead>
+            <tbody id="body-result">
+                </tbody>
+        </table>
+        <br>
+        <button type="button" class="btn-history" onclick="backToMain()">Quay Về Trang Chủ / Xem Danh Sách</button>
+    </div>
+</div>
+
+<script>
+    let currentParty = {
+        id: null,
+        name: '',
+        date: '',
+        mams: 0,
+        items: {}
+    };
+
+    window.onload = function() {
+        renderHistory();
+    };
+
+    function clearZero(input) {
+        if (input.value === "0") {
+            input.value = "";
+        }
+    }
+
+    function restoreZero(input) {
+        if (input.value === "") {
+            input.value = "0";
+        }
+    }
+
+    // Hàm tự động tính toán tổng số đồ cần mang đi ở bước 2 khi thay đổi số mâm hoặc định mức
+    function calculateTotalRequired() {
+        const mams = parseInt(document.getElementById('party-mams').value) || 0;
+        const perMamInputs = document.querySelectorAll('.per-mam');
+        
+        perMamInputs.forEach(input => {
+            const itemName = input.getAttribute('data-item');
+            const perMamQty = parseInt(input.value) || 0;
+            const totalRequired = mams * perMamQty;
+            
+            document.getElementById(`total-${itemName}`).innerText = totalRequired;
+        });
+    }
+
+    function initParty() {
+        const name = document.getElementById('party-name').value.trim();
+        const date = document.getElementById('party-date').value;
+
+        if (!name) {
+            alert('Vui lòng nhập tên đám cỗ!');
+            return;
+        }
+
+        currentParty.id = 'party_' + Date.now();
+        currentParty.name = name;
+        currentParty.date = date;
+
+        document.getElementById('display-party-title').innerText = `Đám cỗ: ${name} ${date ? '('+formatDate(date)+')' : ''}`;
+        document.getElementById('step-create-party').classList.add('hidden');
+        document.getElementById('step-before').classList.remove('hidden');
+        
+        // Đặt mặc định số mâm là 0 và tính toán lại bảng số lượng
+        document.getElementById('party-mams').value = "0";
+        calculateTotalRequired();
+        window.scrollTo(0, 0);
+    }
+
+    function lockBeforeSave() {
+        const mams = parseInt(document.getElementById('party-mams').value) || 0;
+        if(mams <= 0) {
+            alert('Vui lòng nhập số lượng mâm lớn hơn 0!');
+            return;
+        }
+        
+        currentParty.mams = mams;
+        const perMamInputs = document.querySelectorAll('.per-mam');
+        currentParty.items = {};
+
+        perMamInputs.forEach(input => {
+            const itemName = input.getAttribute('data-item');
+            const perMamQty = parseInt(input.value) || 0;
+            const totalBefore = mams * perMamQty;
+            
+            // Lưu tổng số mang đi ban đầu, mặc định số thu về bằng số mang đi để người dùng tiện chỉnh sửa số hụt
+            currentParty.items[itemName] = { before: totalBefore, after: totalBefore };
+        });
+
+        document.getElementById('mam-count-after').innerText = `📦 Quy mô: ${mams} mâm`;
+        document.getElementById('display-party-title-after').innerText = `Đám cỗ: ${currentParty.name}`;
+        
+        const bodyAfter = document.getElementById('body-after');
+        bodyAfter.innerHTML = '';
+
+        for (const [key, value] of Object.entries(currentParty.items)) {
+            // Chỉ hiển thị loại đồ dùng có tổng mang đi > 0 để nhập thu về cho gọn
+            if (value.before > 0) {
+                const row = `
+                    <tr>
+                        <td style="text-align:left; font-weight:bold;">${key}</td>
+                        <td><span style="color:blue; font-weight:bold;">${value.before}</span></td>
+                        <td>
+                            <input type="number" class="qty-after" data-item="${key}" value="${value.before}" min="0" onfocus="clearZero(this)" onblur="restoreZero(this)">
+                        </td>
+                    </tr>
+                `;
+                bodyAfter.innerHTML += row;
+            }
+        }
+
+        document.getElementById('step-before').classList.add('hidden');
+        document.getElementById('step-after').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    function calculateResultAndSave() {
+        const afterInputs = document.querySelectorAll('.qty-after');
+        
+        afterInputs.forEach(input => {
+            const itemName = input.getAttribute('data-item');
+            const qty = parseInt(input.value) || 0;
+            currentParty.items[itemName].after = qty;
+        });
+
+        let history = JSON.parse(localStorage.getItem('party_history')) || [];
+        const existingIndex = history.findIndex(p => p.id === currentParty.id);
+        
+        if (existingIndex !== -1) {
+            history[existingIndex] = JSON.parse(JSON.stringify(currentParty));
+        } else {
+            history.unshift(JSON.parse(JSON.stringify(currentParty)));
+        }
+        
+        localStorage.setItem('party_history', JSON.stringify(history));
+        showResultCard(currentParty);
+    }
+
+    function showResultCard(party) {
+        document.getElementById('display-party-title-result').innerText = `Đám cỗ: ${party.name} ${party.date ? '('+formatDate(party.date)+')' : ''}`;
+        document.getElementById('mam-count-result').innerText = `📋 Tổng quy mô: ${party.mams} mâm`;
+        
+        const bodyResult = document.getElementById('body-result');
+        bodyResult.innerHTML = '';
+
+        for (const [key, value] of Object.entries(party.items)) {
+            const diff = value.before - value.after;
+            let statusText = '';
+            let statusClass = '';
+
+            if (diff > 0) {
+                statusText = `Thiếu ${diff} ${key.includes('Đũa') ? 'đôi' : 'cái'} ❌`;
+                statusClass = 'loss';
+            } else if (diff < 0) {
+                statusText = `Dư ${Math.abs(diff)} ${key.includes('Đũa') ? 'đôi' : 'cái'} 🤔`;
+                statusClass = 'enough';
+            } else {
+                statusText = 'Đủ ✔️';
+                statusClass = 'enough';
+            }
+
+            if (value.before > 0 || value.after > 0) {
+                const row = `
+                    <tr>
+                        <td style="text-align:left;">${key}</td>
+                        <td>${value.before}</td>
+                        <td>${value.after}</td>
+                        <td class="${statusClass}">${diff > 0 ? diff : 0}</td>
+                        <td class="${statusClass}">${statusText}</td>
+                    </tr>
+                `;
+                bodyResult.innerHTML += row;
+            }
+        }
+
+        document.getElementById('step-create-party').classList.add('hidden');
+        document.getElementById('step-before').classList.add('hidden');
+        document.getElementById('step-after').classList.add('hidden');
+        document.getElementById('step-result').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+
+    function renderHistory() {
+        const historyList = document.getElementById('history-list');
+        const history = JSON.parse(localStorage.getItem('party_history')) || [];
+
+        if (history.length === 0) {
+            historyList.innerHTML = '<p style="text-align: center; color: #888; font-style: italic;">Chưa có đám cỗ nào được lưu.</p>';
+            return;
+        }
+
+        historyList.innerHTML = '';
+        history.forEach(party => {
+            const dateStr = party.date ? formatDate(party.date) : 'Không rõ ngày';
+            const mamsStr = party.mams ? ` - Quy mô: ${party.mams} mâm` : '';
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'history-item';
+            itemDiv.innerHTML = `
+                <div>
+                    <strong>${party.name}</strong> <small style="color:#666;">(${dateStr}${mamsStr})</small>
+                </div>
+                <div>
+                    <button class="btn-sm btn-success" onclick="viewPartyDetail('${party.id}')">Xem báo cáo</button>
+                    <button class="btn-sm btn-danger" onclick="deleteParty('${party.id}', '${party.name}')">Xóa</button>
+                </div>
+            `;
+            historyList.appendChild(itemDiv);
+        });
+    }
+
+    function viewPartyDetail(id) {
+        const history = JSON.parse(localStorage.getItem('party_history')) || [];
+        const party = history.find(p => p.id === id);
+        if (party) {
+            showResultCard(party);
+        }
+    }
+
+    function deleteParty(id, name) {
+        if (confirm(`Bạn có chắc chắn muốn xóa dữ liệu đám cỗ "${name}" không?`)) {
+            let history = JSON.parse(localStorage.getItem('party_history')) || [];
+            history = history.filter(p => p.id !== id);
+            localStorage.setItem('party_history', JSON.stringify(history));
+            renderHistory();
+        }
+    }
+
+    function backToMain() {
+        document.getElementById('party-name').value = '';
+        document.getElementById('party-date').value = '';
+        
+        document.getElementById('step-before').classList.add('hidden');
+        document.getElementById('step-after').classList.add('hidden');
+        document.getElementById('step-result').classList.add('hidden');
+        document.getElementById('step-create-party').classList.remove('hidden');
+        
+        currentParty = { id: null, name: '', date: '', mams: 0, items: {} };
+        renderHistory();
+        window.scrollTo(0, 0);
+    }
+
+    function formatDate(dateString) {
+        if(!dateString) return "";
+        const parts = dateString.split('-');
+        if(parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return dateString;
+    }
+</script>
+
+</body>
+</html>
+
